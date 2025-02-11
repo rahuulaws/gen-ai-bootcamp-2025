@@ -72,3 +72,4 @@ We have the following tables:
 - POST /api/full_reset
 - POST /api/study_sessions/:id/words/:word_id/review
   - required params: correct
+
