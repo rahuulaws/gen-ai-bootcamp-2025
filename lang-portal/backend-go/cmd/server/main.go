@@ -11,8 +11,13 @@ import (
 	"lang-portal/internal/service"
 )
 func main() {
-	// Ensure database directory exists
-	dbPath := filepath.Join(".", "words.db")
+	
+	// Get database path from environment variable or use default
+	dbPath := os.Getenv("DB_PATH")
+	if dbPath == "" {
+		dbPath = filepath.Join(".", "words.db")
+	}
+
 	dbDir := filepath.Dir(dbPath)
 	if err := os.MkdirAll(dbDir, 0755); err != nil {
 		log.Fatal("Failed to create database directory:", err)
