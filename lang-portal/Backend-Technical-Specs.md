@@ -12,14 +12,30 @@ A language learning school wants to build a prototype of learning portal which w
 - The backend will be built using Go
 - The database will be SQLite3
 - The API will be built using Gin
+- Mage is a task runner for Go.
 - The API will always return JSON
 - There will no authentication or authorization
 - Everything be treated as a single user
 
+## Directory Structure
+```text
+backend_go/
+├── cmd/
+│   └── server/
+├── internal/
+│   ├── models/     # Data structures and database operations
+│   ├── handlers/   # HTTP handlers organized by feature (dashboard, words, groups, etc.)
+│   └── service/    # Business logic
+├── db/
+│   ├── migrations/
+│   └── seeds/      # For initial data population
+├── magefile.go
+├── go.mod
+└── words.db
+```
 ## Database Schema
 
 Our database will be a single sqlite database called `words.db` that will be in the root of the project folder of `backend_go`
-
 
 We have the following tables:
 - words - stored vocabulary words
@@ -53,14 +69,10 @@ We have the following tables:
 
 ## API Endpoints
 
-
 ### GET /api/dashboard/last_study_session
-
 Returns information about the most recent study session.
 
-
 #### JSON Response
-
 ```json
 {
   "id": 123,
@@ -76,8 +88,8 @@ Returns information about the most recent study session.
 Returns study progress statistics.
 Please note that the frontend will determine progress bar basedon total words studied and total available words.
 
-
 #### JSON Response
+
 ```json
 {
   "total_words_studied": 3,
@@ -85,9 +97,10 @@ Please note that the frontend will determine progress bar basedon total words st
 }
 ```
 
-
 ### GET /api/dashboard/quick-stats
+
 Returns quick overview statistics.
+
 #### JSON Response
 ```json
 {
@@ -98,11 +111,9 @@ Returns quick overview statistics.
 }
 ```
 
-
 ### GET /api/study_activities/:id
 
 #### JSON Response
-
 ```json
 {
   "id": 1,
@@ -113,6 +124,7 @@ Returns quick overview statistics.
 ```
 
 ### GET /api/study_activities/:id/study_sessions
+
 - pagination with 100 items per page
 
 ```json
@@ -143,17 +155,16 @@ Returns quick overview statistics.
 - study_activity_id integer
 
 #### JSON Response
-
 {
   "id": 124,
   "group_id": 123
 }
 
 ### GET /api/words
+
 - pagination with 100 items per page
 
 #### JSON Response
-
 ```json
 {
   "items": [
@@ -175,9 +186,7 @@ Returns quick overview statistics.
 ```
 
 ### GET /api/words/:id
-
 #### JSON Response
-
 ```json
 {
   "japanese": "こんにちは",
@@ -198,9 +207,7 @@ Returns quick overview statistics.
 
 ### GET /api/groups
 - pagination with 100 items per page
-
 #### JSON Response
-
 ```json
 {
   "items": [
@@ -218,10 +225,9 @@ Returns quick overview statistics.
   }
 }
 ```
+
 ### GET /api/groups/:id
-
 #### JSON Response
-
 ```json
 {
   "id": 1,
@@ -231,10 +237,9 @@ Returns quick overview statistics.
   }
 }
 ```
+
 ### GET /api/groups/:id/words
-
 #### JSON Response
-
 ```json
 {
   "items": [
@@ -254,10 +259,9 @@ Returns quick overview statistics.
   }
 }
 ```
+
 ### GET /api/groups/:id/study_sessions
-
 #### JSON Response
-
 ```json
 {
   "items": [
@@ -278,11 +282,10 @@ Returns quick overview statistics.
   }
 }
 ```
+
 ### GET /api/study_sessions
 - pagination with 100 items per page
-
 #### JSON Response
-
 ```json
 {
   "items": [
@@ -303,10 +306,9 @@ Returns quick overview statistics.
   }
 }
 ```
+
 ### GET /api/study_sessions/:id
-
 #### JSON Response
-
 ```json
 {
   "id": 123,
@@ -320,9 +322,7 @@ Returns quick overview statistics.
 
 ### GET /api/study_sessions/:id/words
 - pagination with 100 items per page
-
 #### JSON Response
-
 ```json
 {
   "items": [
@@ -344,9 +344,7 @@ Returns quick overview statistics.
 ```
 
 ### POST /api/reset_history
-
 #### JSON Response
-
 ```json
 {
   "success": true,
@@ -355,9 +353,7 @@ Returns quick overview statistics.
 ```
 
 ### POST /api/full_reset
-
 #### JSON Response
-
 ```json
 {
   "success": true,
@@ -365,18 +361,13 @@ Returns quick overview statistics.
 }
 ```
 
-
 ### POST /api/study_sessions/:id/words/:word_id/review
-
-
 #### Request Params
-
 - id (study_session_id) integer
 - word_id integer
 - correct boolean
 
 #### Request Payload
-
 ```json
 {
   "correct": true
@@ -384,7 +375,6 @@ Returns quick overview statistics.
 ```
 
 #### JSON Response
-
 ```json
 {
   "success": true,
@@ -395,8 +385,8 @@ Returns quick overview statistics.
 }
 ```
 
-## Mage Tasks
-Mage is a task runner for Go.
+## Task Runner Tasks
+
 Lets list out possible tasks we need for our lang portal.
 
 ### Initialize Database
@@ -404,9 +394,11 @@ This task will initialize the sqlite database called `words.db
 
 ### Migrate Database
 This task will run a series of migrations sql files on the database
+
 Migrations live in the `migrations` folder.
 The migration files will be run in order of their file name.
 The file names should looks like this:
+
 ```sql
 0001_init.sql
 0002_create_words_table.sql
@@ -414,8 +406,11 @@ The file names should looks like this:
 
 ### Seed Data
 This task will import json files and transform them into target data for our database.
+
 All seed files live in the `seeds` folder.
+
 In our task we should have DSL to specific each seed file and its expected group word name.
+
 ```json
 [
   {
@@ -425,4 +420,3 @@ In our task we should have DSL to specific each seed file and its expected group
   },
   ...
 ]
-```
